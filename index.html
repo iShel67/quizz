@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тайм-менеджмент: Битва за время</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3a7c, #3a4a8c);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 85vh;
+        }
+        
+        .header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 5px solid #f0b400;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Экран приветствия */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .active {
+            display: flex;
+        }
+        
+        #welcome-screen {
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                        url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 40px;
+            border-radius: 20px;
+        }
+        
+        #welcome-screen h2 {
+            color: #182848;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+        
+        #welcome-screen p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 700px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #5b7cc7, #283858);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Экран вопроса */
+        .question-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .question-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: brightness(0.7);
+        }
+        
+        .question-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .question-number {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #f0b400;
+            font-weight: bold;
+        }
+        
+        .question-text {
+            font-size: 1.6rem;
+            line-height: 1.4;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        
+        .answers-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .answers-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .answer-btn {
+            background-color: white;
+            border: 3px solid #e0e0e0;
+            padding: 20px 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .answer-btn:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .answer-btn.selected {
+            border-color: #4b6cb7;
+            background-color: #e8edff;
+        }
+        
+        .answer-btn.correct {
+            border-color: #28a745;
+            background-color: #d4edda;
+            animation: pulse 0.5s;
+        }
+        
+        .answer-btn.incorrect {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        
+        .answer-letter {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: #4b6cb7;
+            color: white;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+            font-weight: bold;
+        }
+        
+        .feedback-container {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            border-left: 5px solid #4b6cb7;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        
+        .feedback-title {
+            color: #182848;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feedback-title i {
+            margin-right: 10px;
+        }
+        
+        .feedback-content {
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .next-btn {
+            align-self: flex-end;
+            margin-top: 20px;
+        }
+        
+        /* Экран результатов */
+        .results-container {
+            text-align: center;
+            width: 100%;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .score-value {
+            font-size: 4rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .score-text {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .results-table th {
+            background-color: #182848;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .results-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .results-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .results-table tr:hover {
+            background-color: #e8edff;
+        }
+        
+        .player-name {
+            font-weight: bold;
+            color: #182848;
+        }
+        
+        .player-score {
+            font-weight: bold;
+            color: #4b6cb7;
+        }
+        
+        .player-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .restart-btn {
+            margin-top: 20px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .timer {
+            font-size: 1.1rem;
+            color: #182848;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .timer i {
+            margin-right: 8px;
+            color: #f0b400;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes celebrate {
+            0% { transform: translateY(0); }
+            25% { transform: translateY(-10px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .celebration {
+            animation: celebrate 1s ease;
+        }
+        
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 10;
+        }
+        
+        footer {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Тайм-менеджмент: Битва за время</h1>
+            <div class="subtitle">15 вопросов, чтобы проверить свои навыки управления временем</div>
+        </div>
+        
+        <div class="content">
+            <!-- Экран приветствия -->
+            <div id="welcome-screen" class="screen active">
+                <h2>Добро пожаловать в игру!</h2>
+                <p>Проверьте свои знания о тайм-менеджменте и узнайте новые техники эффективного управления временем. Вас ждут 15 вопросов с разными уровнями сложности. После каждого ответа вы получите подробное объяснение с практическими советами.</p>
+                <p>После завершения игры вы увидите таблицу с результатами всех игроков, прошедших эту игру.</p>
+                <button id="start-btn" class="btn">Начать игру</button>
+            </div>
+            
+            <!-- Экран вопроса -->
+            <div id="question-screen" class="screen">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="timer" id="timer">
+                    <i class="fas fa-clock"></i> Время на вопрос: <span id="time-left">30</span> сек
+                </div>
+                
+                <div class="question-container">
+                    <div class="question-bg" id="question-bg"></div>
+                    <div class="question-content">
+                        <div class="question-number" id="question-number">Вопрос 1 из 15</div>
+                        <div class="question-text" id="question-text"></div>
+                    </div>
+                </div>
+                
+                <div class="answers-container" id="answers-container">
+                    <!-- Кнопки ответов будут добавлены через JavaScript -->
+                </div>
+                
+                <div class="feedback-container" id="feedback-container">
+                    <div class="feedback-title" id="feedback-title">
+                        <i class="fas fa-check-circle"></i> Правильный ответ!
+                    </div>
+                    <div class="feedback-content" id="feedback-content"></div>
+                </div>
+                
+                <button id="next-btn" class="btn next-btn" style="display: none;">Следующий вопрос</button>
+            </div>
+            
+            <!-- Экран результатов -->
+            <div id="results-screen" class="screen">
+                <div class="results-container">
+                    <h2>Игра завершена!</h2>
+                    <p>Ваш результат:</p>
+                    
+                    <div class="score-circle">
+                        <div class="score-value" id="final-score">0</div>
+                        <div class="score-text">из 15</div>
+                    </div>
+                    
+                    <p id="result-message"></p>
+                    
+                    <h3>Таблица результатов</h3>
+                    <table class="results-table" id="results-table">
+                        <thead>
+                            <tr>
+                                <th>Имя</th>
+                                <th>Результат</th>
+                                <th>Дата</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-table-body">
+                            <!-- Результаты будут добавлены через JavaScript -->
+                        </tbody>
+                    </table>
+                    
+                    <div class="action-buttons">
+                        <button id="restart-btn" class="btn restart-btn">Играть снова</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button id="sound-toggle" class="sound-toggle">
+            <i class="fas fa-volume-up"></i>
+        </button>
+    </div>
+    
+    <footer>
+        Игра создана для проверки знаний по тайм-менеджменту. Используйте полученные знания для улучшения своей продуктивности!
+    </footer>
+
+    <audio id="correct-sound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="incorrect-sound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/257/257-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="click-sound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/249/249-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="timer-sound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Данные игры
+        const gameData = {
+            currentQuestion: 0,
+            score: 0,
+            timer: null,
+            timeLeft: 30,
+            soundEnabled: true,
+            playerName: '',
+            questions: [
+                {
+                    question: "Что такое матрица Эйзенхауэра?",
+                    background: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80",
+                    answers: [
+                        "Система расстановки приоритетов задач по важности и срочности",
+                        "Метод планирования времени по 25-минутным интервалам",
+                        "Техника постановки целей по SMART",
+                        "Метод визуализации задач на временной шкале"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Матрица Эйзенхауэра — это инструмент расстановки приоритетов, разделяющий задачи на четыре категории: 1) Важные и срочные (делать немедленно), 2) Важные, но не срочные (планировать), 3) Срочные, но не важные (делегировать), 4) Не срочные и не важные (удалять). Эта система помогает сосредоточиться на том, что действительно важно для достижения целей, а не просто реагировать на срочные дела."
+                },
+                {
+                    question: "Что такое техника Pomodoro?",
+                    background: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Метод работы по 25 минут с 5-минутными перерывами",
+                        "Система планирования недели",
+                        "Техника постановки долгосрочных целей",
+                        "Метод борьбы с прокрастинацией через визуализацию"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Техника Pomodoro — это метод управления временем, предложенный Франческо Чирилло. Он заключается в разбиении работы на интервалы по 25 минут (называемые 'помидорами'), разделённые короткими перерывами. После четырёх 'помидоров' следует более длительный перерыв (15-30 минут). Этот метод помогает сохранять концентрацию, бороться с прокрастинацией и снижать усталость."
+                },
+                {
+                    question: "Что из перечисленного является примером 'пожирателя времени'?",
+                    background: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Частая проверка email и соцсетей в рабочее время",
+                        "Четкое планирование дня с вечера",
+                        "Использование матрицы Эйзенхауэра",
+                        "Выполнение важных задач утром"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "'Пожиратели времени' — это действия, которые отнимают время, но не приносят значимой пользы. К ним относятся: частые проверки email и соцсетей, бесполезные совещания, многозадачность, перфекционизм в мелочах, неумение говорить 'нет'. Для эффективного тайм-менеджмента важно идентифицировать и минимизировать такие пожиратели времени."
+                },
+                {
+                    question: "Что такое принцип Парето в контексте тайм-менеджмента?",
+                    background: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "20% усилий дают 80% результатов",
+                        "Работа расширяется, чтобы заполнить время, отпущенное на неё",
+                        "Задачи следует выполнять по мере их поступления",
+                        "Важные задачи нужно делать в первую очередь"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Принцип Парето (правило 80/20) утверждает, что 20% усилий дают 80% результатов. В тайм-менеджменте это означает, что следует сосредоточиться на тех 20% задач, которые приносят 80% желаемых результатов. Идентификация этих ключевых задач и приоритизация их выполнения значительно повышает продуктивность."
+                },
+                {
+                    question: "Что такое закон Паркинсона?",
+                    background: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Работа расширяется, чтобы заполнить время, отпущенное на неё",
+                        "20% усилий дают 80% результатов",
+                        "При наличии выбора человек принимает самое простое решение",
+                        "Чем больше дел планируешь, тем меньше успеваешь"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Закон Паркинсона гласит: 'Работа расширяется, чтобы заполнить время, отпущенное на неё'. Это означает, что если на задачу выделено много времени, она будет выполняться медленнее. Для борьбы с этим эффектом полезно устанавливать жёсткие, но реалистичные дедлайны и использовать технику тайм-боксинга (выделение фиксированного времени на задачу)."
+                },
+                {
+                    question: "Что такое техника 'Съешь лягушку'?",
+                    background: "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1776&q=80",
+                    answers: [
+                        "Выполнение самой неприятной задачи первой с утра",
+                        "Разделение большой задачи на мелкие части",
+                        "Делегирование неприятных задач другим",
+                        "Откладывание сложных задач на потом"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Техника 'Съешь лягушку' предлагает начинать день с выполнения самой сложной, неприятной или важной задачи ('лягушки'). Это позволяет: 1) избежать прокрастинации, 2) получить чувство удовлетворения от выполненного, 3) освободить остаток дня для других задач. Метод основан на идее, что если первым делом с утра съесть живую лягушку, остаток дня обещает быть чудесным, поскольку худшее на сегодня уже позади."
+                },
+                {
+                    question: "Что означает аббревиатура SMART в постановке целей?",
+                    background: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1768&q=80",
+                    answers: [
+                        "Конкретные, Измеримые, Достижимые, Релевантные, Ограниченные по времени",
+                        "Стратегические, Масштабируемые, Адаптивные, Реалистичные, Тактические",
+                        "Структурированные, Мотивирующие, Актуальные, Ресурсные, Трансформируемые",
+                        "Системные, Многомерные, Аналитические, Результативные, Таргетированные"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "SMART — это критерии постановки эффективных целей: Specific (конкретная), Measurable (измеримая), Achievable (достижимая), Relevant (релевантная), Time-bound (ограниченная по времени). Например, вместо цели 'Выучить английский' SMART-цель будет звучать как 'Достичь уровня B1 по английскому к концу года, занимаясь 3 раза в неделю по 1 часу'. Это делает цель понятной и достижимой."
+                },
+                {
+                    question: "Что такое 'биологический пик продуктивности'?",
+                    background: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Период дня, когда человек наиболее энергичен и сосредоточен",
+                        "Время суток, когда лучше всего спать",
+                        "Момент наибольшей творческой активности",
+                        "Период после обеда, когда продуктивность снижается"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Биологический пик продуктивности — это время суток, когда человек наиболее энергичен, сосредоточен и эффективен. У большинства людей он приходится на утренние часы (с 8 до 12), но у 'сов' может смещаться на более позднее время. Важно определить свой пик продуктивности и планировать на это время самые важные и сложные задачи, а рутинные дела оставлять на периоды спада энергии."
+                },
+                {
+                    question: "Что такое метод Айви Ли?",
+                    background: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Составление списка из 6 важных задач на следующий день",
+                        "Работа по 25-минутным интервалам",
+                        "Разделение задач по матрице Эйзенхауэра",
+                        "Визуализация целей на доске визуализации"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Метод Айви Ли — это простая техника повышения продуктивности, которая включает 5 шагов: 1) В конце каждого дня записывайте 6 самых важных дел на завтра; 2) Расставляйте их в порядке приоритета; 3) С утра начинайте с первой задачи и работайте над ней, пока не завершите; 4) Переходите к следующей задаче; 5) В конце дня переносите невыполненные задачи в список на следующий день. Простота метода делает его чрезвычайно эффективным."
+                },
+                {
+                    question: "Что такое техника 'Швейцарский сыр'?",
+                    background: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1774&q=80",
+                    answers: [
+                        "Выполнение небольших частей большой задачи за короткие промежутки времени",
+                        "Чередование разных видов деятельности в течение дня",
+                        "Использование дыр в расписании для отдыха",
+                        "Совмещение нескольких задач одновременно"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Техника 'Швейцарский сыр' (или 'Пробуривание дыр') предлагает бороться с прокрастинацией на больших задачах, выполняя их небольшими частями за короткие промежутки времени (5-15 минут). Как сыр с дырками, задача постепенно 'прогрызается'. Это снижает психологическое сопротивление, помогает начать и создаёт ощущение прогресса. Особенно эффективна для задач, которые кажутся слишком большими или сложными."
+                },
+                {
+                    question: "Что такое 'правило двух минут' Дэвида Аллена?",
+                    background: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Если задача занимает меньше 2 минут, сделайте её сразу",
+                        "Принимайте решение в течение 2 минут",
+                        "Делайте перерыв каждые 2 часа работы",
+                        "Планируйте день за 2 минуты с утра"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "'Правило двух минут' из системы GTD (Getting Things Done) Дэвида Аллена гласит: если задача занимает меньше двух минут, её следует выполнить немедленно, а не планировать или откладывать. Это предотвращает накопление мелких дел, которые в совокупности отнимают много времени и создают ощущение незавершённости. Для задач, требующих больше времени, применяются другие техники планирования."
+                },
+                {
+                    question: "Что такое 'временное блокирование' (time blocking)?",
+                    background: "https://images.unsplash.com/photo-1540350394557-8d14678e7f91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1772&q=80",
+                    answers: [
+                        "Выделение конкретных временных блоков в календаре для разных задач",
+                        "Запрет на определённые виды деятельности в рабочие часы",
+                        "Разделение дня на равные промежутки для разных видов деятельности",
+                        "Ограничение времени на выполнение каждой задачи"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Временное блокирование — это планирование дня путём выделения конкретных временных блоков в календаре для разных видов деятельности. В отличие от простого списка дел, этот метод учитывает, сколько времени займёт каждая задача и когда вы будете её выполнять. Это помогает: 1) реалистично оценивать время, 2) минимизировать переключения между задачами, 3) защищать время для важных дел, 4) визуализировать, как будет выглядеть день."
+                },
+                {
+                    question: "Что такое 'правило 1-3-5' в планировании дня?",
+                    background: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "1 большая задача, 3 средние, 5 мелких в день",
+                        "1 час на планирование, 3 часа на работу, 5 часов на отдых",
+                        "1 важная встреча, 3 телефонных звонка, 5 писем",
+                        "1 перерыв в час, 3 больших перерыва, 5 минут на разминку"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Правило 1-3-5 — это простая система планирования дня, согласно которой в течение дня следует выполнять: 1 большую задачу (требует концентрации и времени), 3 средние задачи (важные, но менее сложные), 5 мелких задач (быстрые дела, которые можно сделать за несколько минут). Это помогает создать реалистичный план на день, сбалансировать нагрузку и обеспечить прогресс в разных сферах."
+                },
+                {
+                    question: "Что такое 'бабочка продуктивности'?",
+                    background: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80",
+                    answers: [
+                        "Эффект, когда маленькие изменения в привычках приводят к большим результатам",
+                        "Чередование периодов интенсивной работы и отдыха",
+                        "Метод визуализации, где задачи расположены как крылья бабочки",
+                        "Техника одновременного выполнения нескольких простых задач"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "'Бабочка продуктивности' — это концепция, основанная на 'эффекте бабочки' из теории хаоса. В контексте тайм-менеджмента она означает, что небольшие, но регулярные изменения в привычках и распорядке дня могут со временем привести к значительным улучшениям в продуктивности. Например, ежедневные 15 минут планирования, 5-минутная утренняя медитация или отказ от проверки email первые 2 часа рабочего дня могут кардинально изменить результаты за месяц или год."
+                },
+                {
+                    question: "Что такое метод '90-90-1'?",
+                    background: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1760&q=80",
+                    answers: [
+                        "90 дней подряд уделять 90 минут самой важной задаче",
+                        "90 минут работы, 90 минут отдыха в течение дня",
+                        "90 дней на формирование привычки, 90% успеха — выполнение, 1% — планирование",
+                        "90% задач делегировать, 90% времени экономить, 1 цель на день"
+                    ],
+                    correctAnswer: 0,
+                    explanation: "Метод '90-90-1', предложенный Робином Шармой, заключается в следующем: в течение 90 дней подряд первые 90 минут рабочего дня посвящайте самой важной задаче или проекту. В это время исключите все отвлекающие факторы (email, телефон, соцсети). Этот метод помогает: 1) обеспечить прогресс в ключевых проектах, 2) использовать пик утренней продуктивности, 3) создать ритуал глубокой работы, 4) достичь значительных результатов за 3 месяца."
+                }
+            ]
+        };
+
+        // Элементы DOM
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const questionText = document.getElementById('question-text');
+        const questionNumber = document.getElementById('question-number');
+        const questionBg = document.getElementById('question-bg');
+        const answersContainer = document.getElementById('answers-container');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackContent = document.getElementById('feedback-content');
+        const progressBar = document.getElementById('progress-bar');
+        const timeLeftElement = document.getElementById('time-left');
+        const finalScore = document.getElementById('final-score');
+        const resultMessage = document.getElementById('result-message');
+        const resultsTableBody = document.getElementById('results-table-body');
+        const soundToggle = document.getElementById('sound-toggle');
+        const correctSound = document.getElementById('correct-sound');
+        const incorrectSound = document.getElementById('incorrect-sound');
+        const clickSound = document.getElementById('click-sound');
+        const timerSound = document.getElementById('timer-sound');
+
+        // Переменные для управления игрой
+        let selectedAnswer = null;
+        let answerButtons = [];
+        let isAnswerSubmitted = false;
+        let results = JSON.parse(localStorage.getItem('timeManagementGameResults')) || [];
+
+        // Инициализация игры
+        function initGame() {
+            gameData.currentQuestion = 0;
+            gameData.score = 0;
+            selectedAnswer = null;
+            isAnswerSubmitted = false;
+            updateProgressBar();
+            showScreen(welcomeScreen);
+        }
+
+        // Показать экран
+        function showScreen(screen) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            screen.classList.add('active');
+        }
+
+        // Начать игру
+        startBtn.addEventListener('click', () => {
+            playSound(clickSound);
+            startGame();
+        });
+
+        // Начать игру
+        function startGame() {
+            gameData.currentQuestion = 0;
+            gameData.score = 0;
+            loadQuestion();
+            showScreen(questionScreen);
+        }
+
+        // Загрузить вопрос
+        function loadQuestion() {
+            const question = gameData.questions[gameData.currentQuestion];
+            
+            // Обновить элементы вопроса
+            questionText.textContent = question.question;
+            questionNumber.textContent = `Вопрос ${gameData.currentQuestion + 1} из ${gameData.questions.length}`;
+            questionBg.style.backgroundImage = `url('${question.background}')`;
+            
+            // Очистить контейнер ответов
+            answersContainer.innerHTML = '';
+            answerButtons = [];
+            
+            // Создать перемешанные ответы
+            const answers = [...question.answers];
+            const correctIndex = question.correctAnswer;
+            
+            // Перемешать ответы, но запомнить, где теперь правильный
+            const shuffledAnswers = shuffleArray([...answers]);
+            const newCorrectIndex = shuffledAnswers.indexOf(answers[correctIndex]);
+            
+            // Создать кнопки для ответов
+            const letters = ['A', 'B', 'C', 'D'];
+            shuffledAnswers.forEach((answer, index) => {
+                const button = document.createElement('button');
+                button.className = 'answer-btn';
+                button.innerHTML = `
+                    <div class="answer-letter">${letters[index]}</div>
+                    <div class="answer-text">${answer}</div>
+                `;
+                button.dataset.index = index;
+                button.dataset.isCorrect = (index === newCorrectIndex);
+                
+                button.addEventListener('click', () => selectAnswer(button));
+                answersContainer.appendChild(button);
+                answerButtons.push(button);
+            });
+            
+            // Скрыть фидбек и кнопку "Далее"
+            feedbackContainer.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // Сбросить состояние
+            selectedAnswer = null;
+            isAnswerSubmitted = false;
+            
+            // Запустить таймер
+            startTimer();
+            
+            // Обновить прогресс-бар
+            updateProgressBar();
+        }
+
+        // Перемешать массив (алгоритм Фишера-Йетса)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Выбрать ответ
+        function selectAnswer(button) {
+            if (isAnswerSubmitted) return;
+            
+            playSound(clickSound);
+            
+            // Снять выделение со всех кнопок
+            answerButtons.forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Выделить выбранную кнопку
+            button.classList.add('selected');
+            selectedAnswer = button;
+        }
+
+        // Проверить ответ
+        function checkAnswer() {
+            if (!selectedAnswer || isAnswerSubmitted) return;
+            
+            isAnswerSubmitted = true;
+            clearInterval(gameData.timer);
+            
+            const isCorrect = selectedAnswer.dataset.isCorrect === 'true';
+            
+            // Показать правильные/неправильные ответы
+            answerButtons.forEach(btn => {
+                if (btn.dataset.isCorrect === 'true') {
+                    btn.classList.add('correct');
+                } else if (btn === selectedAnswer && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+                btn.style.pointerEvents = 'none';
+            });
+            
+            // Обновить счет
+            if (isCorrect) {
+                gameData.score++;
+                playSound(correctSound);
+                feedbackTitle.innerHTML = '<i class="fas fa-check-circle"></i> Правильный ответ!';
+                feedbackTitle.style.color = '#28a745';
+            } else {
+                playSound(incorrectSound);
+                feedbackTitle.innerHTML = '<i class="fas fa-times-circle"></i> Неправильный ответ';
+                feedbackTitle.style.color = '#dc3545';
+            }
+            
+            // Показать объяснение
+            feedbackContent.textContent = gameData.questions[gameData.currentQuestion].explanation;
+            feedbackContainer.style.display = 'block';
+            
+            // Показать кнопку "Далее"
+            nextBtn.style.display = 'block';
+            nextBtn.focus();
+        }
+
+        // Перейти к следующему вопросу
+        nextBtn.addEventListener('click', () => {
+            playSound(clickSound);
+            nextQuestion();
+        });
+
+        // Следующий вопрос
+        function nextQuestion() {
+            gameData.currentQuestion++;
+            
+            if (gameData.currentQuestion < gameData.questions.length) {
+                loadQuestion();
+            } else {
+                finishGame();
+            }
+        }
+
+        // Завершить игру
+        function finishGame() {
+            // Получить имя игрока
+            const playerName = prompt('Поздравляем! Игра завершена.\n\nВведите ваше имя для таблицы результатов:', `Игрок${Math.floor(Math.random() * 1000)}`);
+            
+            // Сохранить результат
+            const result = {
+                name: playerName || 'Аноним',
+                score: gameData.score,
+                date: new Date().toLocaleDateString('ru-RU'),
+                time: new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'})
+            };
+            
+            results.push(result);
+            
+            // Сохранить в localStorage (максимум 20 результатов)
+            if (results.length > 20) {
+                results = results.slice(results.length - 20);
+            }
+            localStorage.setItem('timeManagementGameResults', JSON.stringify(results));
+            
+            // Показать экран результатов
+            showResults();
+        }
+
+        // Показать результаты
+        function showResults() {
+            // Обновить счет
+            finalScore.textContent = gameData.score;
+            
+            // Показать сообщение в зависимости от результата
+            let message = '';
+            if (gameData.score >= 13) {
+                message = 'Отличный результат! Вы настоящий мастер тайм-менеджмента!';
+                finalScore.parentElement.classList.add('celebration');
+            } else if (gameData.score >= 10) {
+                message = 'Хороший результат! У вас есть solid знания по тайм-менеджменту.';
+            } else if (gameData.score >= 7) {
+                message = 'Неплохой результат! Есть куда расти в области управления временем.';
+            } else {
+                message = 'Есть над чем поработать! Рекомендуем изучить основы тайм-менеджмента.';
+            }
+            resultMessage.textContent = message;
+            
+            // Обновить таблицу результатов
+            updateResultsTable();
+            
+            // Показать экран результатов
+            showScreen(resultsScreen);
+        }
+
+        // Обновить таблицу результатов
+        function updateResultsTable() {
+            // Сортировка по убыванию счета
+            const sortedResults = [...results].sort((a, b) => b.score - a.score);
+            
+            // Очистить таблицу
+            resultsTableBody.innerHTML = '';
+            
+            // Заполнить таблицу
+            sortedResults.forEach((result, index) => {
+                const row = document.createElement('tr');
+                if (index === 0) {
+                    row.style.backgroundColor = '#fff9e6';
+                }
+                
+                row.innerHTML = `
+                    <td><span class="player-name">${result.name}</span></td>
+                    <td><span class="player-score">${result.score} из 15</span></td>
+                    <td><span class="player-date">${result.date} ${result.time}</span></td>
+                `;
+                
+                resultsTableBody.appendChild(row);
+            });
+        }
+
+        // Начать таймер
+        function startTimer() {
+            gameData.timeLeft = 30;
+            timeLeftElement.textContent = gameData.timeLeft;
+            
+            gameData.timer = setInterval(() => {
+                gameData.timeLeft--;
+                timeLeftElement.textContent = gameData.timeLeft;
+                
+                // Звуковое предупреждение при 10 секундах
+                if (gameData.timeLeft === 10 && gameData.soundEnabled) {
+                    playSound(timerSound);
+                }
+                
+                // Изменить цвет при 10 секундах
+                if (gameData.timeLeft <= 10) {
+                    timeLeftElement.style.color = '#dc3545';
+                }
+                
+                // Время вышло
+                if (gameData.timeLeft <= 0) {
+                    clearInterval(gameData.timer);
+                    timeLeftElement.textContent = '0';
+                    
+                    // Автоматически проверить ответ, если выбран
+                    if (selectedAnswer) {
+                        checkAnswer();
+                    } else {
+                        // Если ответ не выбран, показать сообщение
+                        feedbackTitle.innerHTML = '<i class="fas fa-hourglass-end"></i> Время вышло!';
+                        feedbackTitle.style.color = '#dc3545';
+                        feedbackContent.textContent = 'Вы не успели ответить на вопрос. Правильный ответ: ' + 
+                            gameData.questions[gameData.currentQuestion].answers[gameData.questions[gameData.currentQuestion].correctAnswer];
+                        feedbackContainer.style.display = 'block';
+                        nextBtn.style.display = 'block';
+                        
+                        // Показать правильный ответ
+                        answerButtons.forEach(btn => {
+                            if (btn.dataset.isCorrect === 'true') {
+                                btn.classList.add('correct');
+                            }
+                            btn.style.pointerEvents = 'none';
+                        });
+                        
+                        isAnswerSubmitted = true;
+                    }
+                }
+            }, 1000);
+        }
+
+        // Обновить прогресс-бар
+        function updateProgressBar() {
+            const progress = ((gameData.currentQuestion) / gameData.questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Воспроизвести звук
+        function playSound(soundElement) {
+            if (!gameData.soundEnabled) return;
+            
+            soundElement.currentTime = 0;
+            soundElement.play().catch(e => console.log("Автовоспроизведение звука заблокировано"));
+        }
+
+        // Перезапустить игру
+        restartBtn.addEventListener('click', () => {
+            playSound(clickSound);
+            initGame();
+        });
+
+        // Переключение звука
+        soundToggle.addEventListener('click', () => {
+            gameData.soundEnabled = !gameData.soundEnabled;
+            const icon = soundToggle.querySelector('i');
+            
+            if (gameData.soundEnabled) {
+                icon.className = 'fas fa-volume-up';
+                soundToggle.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                playSound(clickSound);
+            } else {
+                icon.className = 'fas fa-volume-mute';
+                soundToggle.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            }
+        });
+
+        // Обработка клика по ответу (с проверкой по таймеру)
+        answersContainer.addEventListener('click', (e) => {
+            const answerBtn = e.target.closest('.answer-btn');
+            if (answerBtn && !isAnswerSubmitted) {
+                selectAnswer(answerBtn);
+                
+                // Автоматически проверить ответ через 0.5 секунды
+                setTimeout(() => {
+                    if (selectedAnswer === answerBtn) {
+                        checkAnswer();
+                    }
+                }, 500);
+            }
+        });
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            updateResultsTable();
+        });
+    </script>
+</body>
+</html>
